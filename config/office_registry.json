@@ -1,0 +1,195 @@
+{
+  "version": "work-office-v1",
+  "brain": {
+    "id": "aiky_main",
+    "name": "AI办公室",
+    "title": "Office Brain",
+    "mission": "统一调度个人生产力办公室，守住规格、质量、知识沉淀和进化学习闭环。",
+    "primary_workflows": ["pe-tasks", "pe-change", "pe-summary"],
+    "support_workflows": ["pe-research", "pe-competitive", "pe-prd", "pe-architecture", "pe-code", "pe-testing"],
+    "evolution": {
+      "mode": "brain",
+      "policy": "负责员工方法晋升审批，维护全局知识和组织规则。"
+    }
+  },
+  "agents": {
+    "ceo_01": {
+      "name": "Steve",
+      "title": "CEO",
+      "department": "Strategy",
+      "mission": "判断市场机会、商业价值和差异化方向。",
+      "skills": ["Market Research", "Competitive Analysis", "Strategy", "Business Model"],
+      "primary_workflows": ["pe-research", "pe-competitive"],
+      "support_workflows": ["pe-prd", "pe-summary"],
+      "artifacts": ["1-调研报告.md", "2-竞品分析.md"],
+      "quality_bar": ["结论明确", "有市场和用户依据", "能指出 Go/No-Go 判断"],
+      "evolution": {
+        "mode": "agent",
+        "focus": ["商业洞察", "市场判断", "竞品模式识别"],
+        "promote_requires": "aiky_approval"
+      }
+    },
+    "cto_01": {
+      "name": "Elon",
+      "title": "CTO",
+      "department": "Engineering",
+      "mission": "把 Frozen PRD 转成可落地、可扩展、可维护的技术架构。",
+      "skills": ["Architecture", "Tech Stack", "Database Design", "API Design", "Security"],
+      "primary_workflows": ["pe-architecture"],
+      "support_workflows": ["pe-code", "pe-change"],
+      "artifacts": ["4-架构设计.md"],
+      "quality_bar": ["可追溯到 FR/AC/NFR", "技术复杂度可控", "数据和 API 边界清晰"],
+      "evolution": {
+        "mode": "agent",
+        "focus": ["架构设计", "技术选型", "工程风险"],
+        "promote_requires": "aiky_approval"
+      }
+    },
+    "pm_01": {
+      "name": "Emma",
+      "title": "Product Manager",
+      "department": "Product",
+      "mission": "把调研和竞品结论转成可冻结、可验收、可追踪的 PRD。",
+      "skills": ["PRD", "User Story", "Requirement Analysis", "Acceptance Criteria"],
+      "primary_workflows": ["pe-prd"],
+      "support_workflows": ["pe-research", "pe-competitive", "pe-tasks"],
+      "artifacts": ["3-PRD.md"],
+      "quality_bar": ["REQ/FR/AC 编号完整", "产品框架图清晰", "P0/P1 范围可冻结"],
+      "evolution": {
+        "mode": "agent",
+        "focus": ["需求判断", "PRD 质量", "产品框架图"],
+        "promote_requires": "aiky_approval"
+      }
+    },
+    "ui_01": {
+      "name": "Alex",
+      "title": "UI Designer",
+      "department": "Design",
+      "mission": "把产品框架和核心场景转成高质量界面体验。",
+      "skills": ["UI", "UX", "Interaction", "Visual Design", "Prototype"],
+      "primary_workflows": ["pe-code"],
+      "support_workflows": ["pe-prd", "pe-testing"],
+      "artifacts": ["UI_Demo.html"],
+      "quality_bar": ["核心路径清楚", "视觉一致", "状态和反馈完整"],
+      "evolution": {
+        "mode": "agent",
+        "focus": ["交互质量", "视觉系统", "原型表达"],
+        "promote_requires": "aiky_approval"
+      }
+    },
+    "fe_01": {
+      "name": "Lucas",
+      "title": "Frontend Engineer",
+      "department": "Engineering",
+      "mission": "实现可演示、可交互、四态完整的前端体验。",
+      "skills": ["Vue", "React", "JavaScript", "HTML", "CSS", "Responsive UI"],
+      "primary_workflows": ["pe-code"],
+      "support_workflows": ["pe-architecture", "pe-testing"],
+      "artifacts": ["6-代码实现/"],
+      "quality_bar": ["交互可走通", "四态完备", "无控制台错误"],
+      "evolution": {
+        "mode": "agent",
+        "focus": ["前端实现", "状态管理", "响应式体验"],
+        "promote_requires": "aiky_approval"
+      }
+    },
+    "be_01": {
+      "name": "David",
+      "title": "Backend Engineer",
+      "department": "Engineering",
+      "mission": "设计 API、数据模型和服务边界，支撑产品闭环。",
+      "skills": ["API", "Python", "Node", "Database", "Service Design"],
+      "primary_workflows": ["pe-code"],
+      "support_workflows": ["pe-architecture", "pe-testing"],
+      "artifacts": ["Backend_API.md"],
+      "quality_bar": ["接口清晰", "数据模型合理", "错误和权限边界明确"],
+      "evolution": {
+        "mode": "agent",
+        "focus": ["API 设计", "数据建模", "服务可靠性"],
+        "promote_requires": "aiky_approval"
+      }
+    },
+    "qa_01": {
+      "name": "Sarah",
+      "title": "QA Engineer",
+      "department": "Quality",
+      "mission": "验证 P0/P1 AC 覆盖率和质量门槛，推动缺陷闭环。",
+      "skills": ["Test Cases", "Quality Assurance", "Regression", "Bug Tracking"],
+      "primary_workflows": ["pe-testing"],
+      "support_workflows": ["pe-code", "pe-change", "pe-summary"],
+      "artifacts": ["7-测试用例.md"],
+      "quality_bar": ["P0 AC 100% 覆盖并通过", "失败项生成 FIX", "NFR 有验证记录"],
+      "evolution": {
+        "mode": "agent",
+        "focus": ["测试覆盖", "质量门槛", "缺陷复盘"],
+        "promote_requires": "aiky_approval"
+      }
+    }
+  },
+  "workflow_map": [
+    {
+      "key": "research",
+      "workflow": "pe-research",
+      "label": "市场调研",
+      "owner": "ceo_01",
+      "reviewers": ["pm_01", "aiky_main"],
+      "artifact": "1-调研报告.md"
+    },
+    {
+      "key": "competitive",
+      "workflow": "pe-competitive",
+      "label": "竞品分析",
+      "owner": "ceo_01",
+      "reviewers": ["pm_01", "ui_01", "aiky_main"],
+      "artifact": "2-竞品分析.md"
+    },
+    {
+      "key": "planning",
+      "workflow": "pe-prd",
+      "label": "PRD",
+      "owner": "pm_01",
+      "reviewers": ["ceo_01", "aiky_main"],
+      "artifact": "3-PRD.md"
+    },
+    {
+      "key": "architecture",
+      "workflow": "pe-architecture",
+      "label": "架构设计",
+      "owner": "cto_01",
+      "reviewers": ["be_01", "fe_01", "aiky_main"],
+      "artifact": "4-架构设计.md"
+    },
+    {
+      "key": "tasks",
+      "workflow": "pe-tasks",
+      "label": "任务拆解",
+      "owner": "aiky_main",
+      "reviewers": ["pm_01", "cto_01"],
+      "artifact": "5-开发任务.md"
+    },
+    {
+      "key": "execution",
+      "workflow": "pe-code",
+      "label": "代码实现",
+      "owner": "fe_01",
+      "reviewers": ["ui_01", "be_01", "aiky_main"],
+      "artifact": "6-代码实现/"
+    },
+    {
+      "key": "testing",
+      "workflow": "pe-testing",
+      "label": "测试验收",
+      "owner": "qa_01",
+      "reviewers": ["aiky_main"],
+      "artifact": "7-测试用例.md"
+    },
+    {
+      "key": "summary",
+      "workflow": "pe-summary",
+      "label": "项目总结",
+      "owner": "aiky_main",
+      "reviewers": ["ceo_01", "cto_01", "pm_01", "qa_01"],
+      "artifact": "PROJECT_SUMMARY.md"
+    }
+  ]
+}

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI办公室 — 智能协作系统</title>
+    <meta name="description" content="AI办公室 Multi-Agent Collaboration System">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/assets/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app" style="display:none">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <div class="logo-icon">A</div>
+                <span class="logo-text">AI办公室</span>
+                <span class="logo-version">v2.0</span>
+            </div>
+
+            <div v-if="currentTask" class="task-badge"
+                :class="{'waiting': currentTask.status === 'waiting_for_confirm', 'in-progress': currentTask.status === 'in_progress', 'completed': currentTask.status === 'completed', 'stopped': currentTask.status === 'stopped'}">
+                <span class="dot"></span>
+                <span style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ currentTask.title }}</span>
+                <span style="color:var(--text-muted)">{{ getStatusText(currentTask.status) }}</span>
+                <button v-if="canStopTask" class="task-stop-btn" @click="stopTask" title="停止当前工作">
+                    <i class="fas fa-stop"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main -->
+        <div class="app-main">
+
+            <!-- LEFT: Pixel Office Visualization -->
+            <div class="viz-panel pixel-panel">
+
+                <!-- Stage Progress Bar -->
+                <div class="pixel-stage-bar">
+                    <div class="progress-bar">
+                        <div class="progress-step" v-for="(step, idx) in stages" :key="step.key">
+                            <div class="dot" :class="{active: step.key === currentStage, done: isStageComplete(step.key)}">
+                                <i v-if="isStageComplete(step.key)" class="fas fa-check" style="font-size:10px"></i>
+                                <span v-else>{{ idx + 1 }}</span>
+                            </div>
+                            <div class="label" :class="{active: step.key === currentStage, done: isStageComplete(step.key)}">
+                                {{ step.label }}
+                            </div>
+                            <div class="owner">{{ getWorkflowOwner(step.key) }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="office-workspace" @click="hideAgentProfile">
+                    <!-- Work Office Capability Map -->
+                    <section class="office-system-panel">
+                        <div class="office-panel-header">
+                            <div class="office-eyebrow">Work Office</div>
+                            <div class="office-version">{{ officeRegistry.version || 'v1' }}</div>
+                        </div>
+
+                        <div class="office-avatar-rail">
+                            <button v-for="agent in officeAgents" :key="agent.id"
+                                class="office-agent-avatar"
+                                :class="{active: selectedAgentId === agent.id, working: agent.state.status && agent.state.status !== 'idle'}"
+                                @click.stop="selectAgent(agent.id)"
+                                :title="(agent.capability.name || getAgentName(agent.id)) + ' · ' + (agent.capability.title || agent.state.role || '')">
+                                <span class="avatar-dot">
+                                    <img v-if="getAvatar(agent.id)" :src="getAvatar(agent.id)">
+                                    <i v-else class="fas fa-robot"></i>
+                                </span>
+                                <strong>{{ agent.capability.name || getAgentName(agent.id) }}</strong>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Pixel Art Office Canvas -->
+                    <div class="pixel-office-wrap">
+                        <canvas id="pixel-office-canvas"></canvas>
+                    </div>
+
+                    <!-- Agent Profile Floating Panel -->
+                    <aside v-if="showAgentProfile" class="agent-profile-float" @click.stop>
+                        <div class="profile-topline">
+                            <div class="profile-heading">
+                                <span class="profile-avatar">
+                                    <img v-if="getAvatar(selectedAgent.id)" :src="getAvatar(selectedAgent.id)">
+                                    <i v-else class="fas fa-robot"></i>
+                                </span>
+                                <div>
+                                    <div class="profile-name">{{ selectedAgent.capability.name || getAgentName(selectedAgent.id) }}</div>
+                                    <div class="profile-title">{{ selectedAgent.capability.title || selectedAgent.state.role }}</div>
+                                </div>
+                            </div>
+                            <button class="close-btn" @click="showAgentProfile = false">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <span class="profile-status" :class="selectedAgent.state.status || 'idle'">
+                            {{ selectedAgent.state.status || 'idle' }}
+                        </span>
+                        <p class="profile-mission">{{ selectedAgent.capability.mission || '等待办公室能力档案同步。' }}</p>
+
+                        <div class="profile-grid">
+                            <div>
+                                <h3>主责流程</h3>
+                                <div class="tag-list">
+                                    <span v-for="item in (selectedAgent.capability.primary_workflows || [])" :key="item">{{ item }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h3>辅助流程</h3>
+                                <div class="tag-list">
+                                    <span v-for="item in (selectedAgent.capability.support_workflows || [])" :key="item">{{ item }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h3>产出物</h3>
+                                <div class="tag-list">
+                                    <span v-for="item in (selectedAgent.capability.artifacts || [])" :key="item">{{ item }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h3>进化重点</h3>
+                                <div class="tag-list">
+                                    <span v-for="item in ((selectedAgent.capability.evolution && selectedAgent.capability.evolution.focus) || [])" :key="item">{{ item }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+
+            </div>
+
+            <!-- RIGHT: Chat Panel -->
+            <div class="chat-panel">
+
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="chat-header-left">
+                        <!-- 正常/查看历史模式: 显示历史按钮 -->
+                        <button v-if="!showHistory" class="btn-icon" @click="toggleHistory" title="历史记录">
+                            <i class="fas fa-history"></i>
+                        </button>
+                        <!-- 列表模式: 显示返回按钮 -->
+                        <button v-if="showHistory" class="btn-icon" @click="showHistory = false" title="返回">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <!-- 查看历史对话时显示标题 -->
+                        <span v-if="viewingHistory" class="viewing-badge">
+                            <i class="fas fa-clock"></i> {{ viewingHistoryTitle }}
+                        </span>
+                        <!-- 列表模式标题 -->
+                        <span v-if="showHistory" class="viewing-badge">
+                            <i class="fas fa-history"></i> 历史记录
+                        </span>
+                    </div>
+                    <div class="chat-header-right">
+                        <button v-if="viewingHistory" class="btn btn-ghost btn-sm" @click="exitHistory">
+                            <i class="fas fa-arrow-left"></i> 退出历史
+                        </button>
+                        <button v-if="!showHistory" class="btn btn-ghost btn-sm" @click="newConversation" title="新对话">
+                            <i class="fas fa-plus"></i> 新对话
+                        </button>
+                        <button v-if="canStopTask" class="btn btn-danger btn-sm" @click="stopTask" title="停止当前工作">
+                            <i class="fas fa-stop"></i> 停止
+                        </button>
+                    </div>
+                </div>
+
+                <!-- === 视图1: 历史列表二级页 === -->
+                <div v-if="showHistory" class="history-list-page">
+                    <div v-if="historyList.length === 0" class="history-empty">
+                        <div style="font-size:32px;margin-bottom:8px">📚</div>
+                        暂无历史记录
+                    </div>
+                    <template v-for="group in groupedHistory" :key="group.label">
+                        <div class="history-group-label">{{ group.label }}</div>
+                        <div v-for="conv in group.items" :key="conv.id" class="history-item" @click="openHistory(conv)">
+                            <div class="history-item-icon">
+                                <i class="fas fa-comment-dots"></i>
+                            </div>
+                            <div class="history-item-main">
+                                <div class="history-item-title">{{ conv.title }}</div>
+                                <div class="history-item-meta">
+                                    <span><i class="fas fa-comment"></i> {{ conv.message_count }}条消息</span>
+                                    <span>·</span>
+                                    <span>{{ formatDate(conv.created_at) }}</span>
+                                </div>
+                            </div>
+                            <button class="history-delete" @click="deleteHistory(conv, $event)" title="删除">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- === 视图2: 聊天消息（正常 + 查看历史共用） === -->
+                <div v-if="!showHistory" id="chat-container" class="chat-messages">
+
+                    <!-- Welcome -->
+                    <div v-if="messages.length === 0" style="text-align:center;padding:40px 20px;color:var(--text-muted)">
+                        <div style="font-size:40px;margin-bottom:12px">🧠</div>
+                        <div style="font-size:14px;font-weight:600;color:var(--text-secondary);margin-bottom:4px">
+                            AI办公室协作系统</div>
+                        <div style="font-size:12px">在下方输入指令，开始多智能体协作</div>
+                    </div>
+
+                    <!-- Messages -->
+                    <div v-for="msg in messages" :key="msg.id">
+
+                        <!-- Agent Message -->
+                        <div v-if="msg.sender_id !== 'user'" class="msg-row">
+                            <div class="msg-avatar">
+                                <img v-if="getAvatar(msg.sender_id)" :src="getAvatar(msg.sender_id)">
+                                <i v-else class="fas fa-robot" style="color:var(--text-muted);font-size:14px;display:flex;align-items:center;justify-content:center;width:100%;height:100%"></i>
+                            </div>
+                            <div class="msg-body">
+                                <div class="msg-sender">{{ getAgentName(msg.sender_id) }}</div>
+                                <div class="msg-bubble"
+                                    :class="{agent: true, stage: msg.message_type === 'stage', artifact: msg.message_type === 'artifact'}">
+                                    <template v-if="isOperationalMessage(msg)">
+                                        <button class="ops-summary" @click="toggleMessageDetails(msg)">
+                                            <span>{{ friendlyMessage(msg) }}</span>
+                                            <i :class="isMessageExpanded(msg) ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+                                        </button>
+                                        <div v-if="isMessageExpanded(msg)" class="ops-detail" v-html="renderMarkdown(msg.content)"></div>
+                                    </template>
+                                    <div v-else v-html="renderMarkdown(msg.content)"></div>
+                                    <!-- Artifact Link -->
+                                    <div v-if="msg.message_type === 'artifact' && msg.metadata"
+                                        class="artifact-link">
+                                        <button @click="openArtifact(msg.metadata)">
+                                            <i :class="msg.metadata.type === 'html' ? 'fas fa-globe' : 'fas fa-file-alt'"></i>
+                                            {{ msg.metadata.type === 'html' ? '预览演示页面' : '查看产出物' }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Message -->
+                        <div v-else class="msg-row user">
+                            <div class="msg-body">
+                                <div class="msg-bubble user-msg">{{ msg.content }}</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Approval Card -->
+                    <div v-if="currentTask && currentTask.status === 'waiting_for_confirm'" class="approval-card">
+                        <div class="title">
+                            <i class="fas fa-pause-circle"></i> 需要审批
+                        </div>
+                        <div class="desc">{{ currentTask.analysis_result || '当前阶段已完成，请确认下一步。' }}</div>
+                        <div class="actions">
+                            <button class="btn btn-ghost" @click="rejectTask">
+                                <i class="fas fa-times"></i> 终止
+                            </button>
+                            <button class="btn btn-primary" @click="approveTask">
+                                批准并继续 <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Input -->
+                <div v-if="!showHistory" class="chat-input-area">
+                    <div class="chat-input-wrap">
+                        <div v-if="mentionOpen" class="mention-popover">
+                            <button v-for="(agent, idx) in mentionCandidates" :key="agent.id"
+                                type="button"
+                                class="mention-item"
+                                :class="{active: idx === mentionIndex}"
+                                @mousedown.prevent="selectMention(agent)">
+                                <span class="mention-avatar">
+                                    <img v-if="getAvatar(agent.id)" :src="getAvatar(agent.id)">
+                                    <i v-else class="fas fa-robot"></i>
+                                </span>
+                                <span class="mention-main">
+                                    <strong>{{ agent.name }}</strong>
+                                    <small>@{{ agent.alias }} · {{ agent.title }}</small>
+                                </span>
+                            </button>
+                            <div v-if="mentionCandidates.length === 0" class="mention-empty">没有匹配的员工</div>
+                        </div>
+                        <textarea v-model="inputMessage"
+                            ref="inputEl"
+                            @input="handleInputChange"
+                            @click="handleInputChange"
+                            @keyup="handleInputChange"
+                            @keydown="handleInputKeydown"
+                            @keydown.shift.enter.stop
+                            placeholder="@sarah 读取网页/文件，从测试开始，总结风险..."></textarea>
+                        <button class="send-btn" @click="sendMessage" :disabled="!inputMessage.trim() || learningInProgress">
+                            <i class="fas fa-paper-plane" style="font-size:12px"></i>
+                        </button>
+                    </div>
+                    <div class="chat-hint">
+                        <span>Enter 发送 · Shift+Enter 换行 · 支持 @员工、网页/文件、指定阶段</span>
+                        <span v-if="lastLearningRoute" class="learning-route">
+                            <i class="fas fa-seedling"></i> {{ lastLearningRoute.agent_name }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Artifact Modal -->
+        <div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
+            <div class="modal-content" :class="{'modal-html': isHtmlPreview}">
+                <div class="modal-header">
+                    <div style="display:flex;align-items:center">
+                        <div class="file-icon">
+                            <i :class="isHtmlPreview ? 'fas fa-globe' : 'fas fa-file-alt'"></i>
+                        </div>
+                        <div class="file-info">
+                            <h3>{{ modalTitle }}</h3>
+                            <p>{{ modalPath }}</p>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center">
+                        <a v-if="isHtmlPreview && previewUrl" :href="previewUrl" target="_blank"
+                            class="btn btn-ghost" style="font-size:12px">
+                            <i class="fas fa-external-link-alt"></i> 新窗口打开
+                        </a>
+                        <button class="close-btn" @click="showModal = false">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <!-- HTML 预览用 iframe -->
+                    <iframe v-if="isHtmlPreview && previewUrl" :src="previewUrl"
+                        class="html-preview-frame"></iframe>
+                    <!-- Markdown 内容 -->
+                    <div v-else class="md-content" v-html="modalRenderedContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" @click="showModal = false">关闭</button>
+                    <button class="btn btn-primary" @click="copyArtifact">
+                        <i class="fas fa-copy"></i> 复制内容
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="pixel-office.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

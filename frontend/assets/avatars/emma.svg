@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="48" fill="#fef3c7" />
+  <!-- Body -->
+  <path d="M20,95 Q50,110 80,95 L80,75 Q50,65 20,75 Z" fill="#f59e0b" />
+  <!-- Head -->
+  <circle cx="50" cy="50" r="22" fill="#fcd34d" />
+  <!-- Hair -->
+  <path d="M25,50 Q20,30 50,20 Q80,30 75,50 Q85,80 50,55 Q15,80 25,50" fill="#78350f" />
+  <!-- Glasses -->
+  <g stroke="#1e293b" stroke-width="2" fill="none">
+      <circle cx="43" cy="50" r="6" />
+      <circle cx="57" cy="50" r="6" />
+      <line x1="49" y1="50" x2="51" y2="50" />
+  </g>
+  <!-- Notebook -->
+  <rect x="65" y="70" width="15" height="20" fill="#3b82f6" rx="2" />
+</svg>

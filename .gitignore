@@ -1,0 +1,26 @@
+# Environment
+.env
+!.env.example
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# Local runtime data
+history/
+workspace/
+inbox/
+logs/
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

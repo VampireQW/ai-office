@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="48" fill="#ffe4e6" />
+  <!-- Body -->
+  <path d="M20,95 Q50,110 80,95 L80,75 Q50,65 20,75 Z" fill="#be123c" />
+  <!-- Head -->
+  <circle cx="50" cy="50" r="22" fill="#fecdd3" />
+  <!-- Hair (Bun) -->
+  <circle cx="50" cy="25" r="8" fill="#881337" />
+  <path d="M30,40 Q50,15 70,40" fill="#881337" />
+  <!-- Eyes -->
+  <path d="M40,50 Q43,53 46,50" stroke="#000" stroke-width="1" fill="none" />
+  <path d="M54,50 Q57,53 60,50" stroke="#000" stroke-width="1" fill="none" />
+</svg>

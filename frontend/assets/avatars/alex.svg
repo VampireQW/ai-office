@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="48" fill="#e0f2fe" />
+  <!-- Body -->
+  <path d="M20,95 Q50,110 80,95 L80,75 Q50,65 20,75 Z" fill="#0ea5e9" />
+  <!-- Scarf -->
+  <path d="M35,75 Q50,85 65,75 L65,85 Q50,95 35,85 Z" fill="#f43f5e" />
+  <!-- Head -->
+  <circle cx="50" cy="50" r="22" fill="#ffedd5" />
+  <!-- Beanie -->
+  <path d="M25,45 Q50,25 75,45 L75,35 Q50,10 25,35 Z" fill="#f43f5e" />
+  <!-- Eyes -->
+  <circle cx="43" cy="52" r="2" fill="#1e293b" />
+  <circle cx="57" cy="52" r="2" fill="#1e293b" />
+  <!-- Goatee -->
+  <path d="M48,65 L50,68 L52,65" stroke="#1e293b" stroke-width="1" fill="none" />
+</svg>

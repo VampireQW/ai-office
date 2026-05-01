@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Pot -->
+  <circle cx="50" cy="50" r="30" fill="#d97706" stroke="#b45309" stroke-width="2" />
+  <circle cx="50" cy="50" r="25" fill="#78350f" />
+  <!-- Leaves -->
+  <path d="M50,50 Q20,20 10,40" stroke="#22c55e" stroke-width="8" stroke-linecap="round" fill="none" />
+  <path d="M50,50 Q80,20 90,40" stroke="#22c55e" stroke-width="8" stroke-linecap="round" fill="none" />
+  <path d="M50,50 Q30,80 20,70" stroke="#16a34a" stroke-width="8" stroke-linecap="round" fill="none" />
+  <path d="M50,50 Q70,80 80,70" stroke="#16a34a" stroke-width="8" stroke-linecap="round" fill="none" />
+</svg>
