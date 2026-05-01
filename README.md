@@ -12,6 +12,7 @@ AI办公室是一个本地运行的多智能体协作系统。它把产品、市
 - 产出物管理：任务结果会保存为 Markdown 或 HTML，支持在页面内预览。
 - 上下文读取：可读取用户指定的网页、文本文件或图片，辅助智能体完成任务。
 - OpenAI 兼容接口：通过环境变量配置任意兼容 Chat Completions 格式的大模型服务。
+- 内置 PE 工作流：仓库包含 `.agent/workflows/pe-workflows`，克隆后即可读取标准化产研流程提示词。
 
 ## 技术栈
 
@@ -70,6 +71,12 @@ python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload --reload-dir .
 
 员工能力和工作流配置位于 `config/office_registry.json`。
 
+PE 工作流文件位于 `.agent/workflows/pe-workflows`，后端默认从该目录读取。若需要使用外部工作流目录，可设置：
+
+```env
+AI_OFFICE_WORKFLOW_DIR=D:\path\to\pe-workflows
+```
+
 ## 发布安全说明
 
 本仓库不会提交真实模型 API、Key 或本地运行数据。以下内容已在 `.gitignore` 中排除：
@@ -88,6 +95,7 @@ python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload --reload-dir .
 AI办公室/
 ├─ backend/                 # FastAPI 后端与智能体逻辑
 ├─ config/                  # 办公室员工和工作流注册表
+├─ .agent/workflows/        # PE 工作流提示词与标准
 ├─ frontend/                # 静态前端页面与像素办公室
 ├─ .env.example             # 环境变量模板
 ├─ requirements.txt         # Python 依赖

@@ -10,6 +10,10 @@
 
 后端启动时会读取该配置，并写入每个 Agent 的 `capability` 状态，供前端办公室面板可视化展示。
 
+PE 工作流标准文件随仓库发布在：
+
+`.agent/workflows/pe-workflows`
+
 ## 管理层
 
 | 员工 | ID | 职位 | 专长领域 |

@@ -18,9 +18,9 @@ FALLBACK_PROMPTS = {
 
 
 class WorkflowManager:
-    WORKFLOW_DIR = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "..", "..", ".agent", "workflows", "pe-workflows")
-    )
+    PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    DEFAULT_WORKFLOW_DIR = os.path.join(PROJECT_ROOT, ".agent", "workflows", "pe-workflows")
+    WORKFLOW_DIR = os.path.abspath(os.getenv("AI_OFFICE_WORKFLOW_DIR", DEFAULT_WORKFLOW_DIR))
 
     @staticmethod
     def get_workflow_content(filename_part: str) -> str:
