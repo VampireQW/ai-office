@@ -279,6 +279,7 @@ body {
 }
 
 .msg-bubble {
+    position: relative;
     padding: 10px 14px;
     border-radius: var(--radius-md);
     font-size: 13px;
@@ -288,6 +289,7 @@ body {
 }
 
 .msg-bubble.agent {
+    padding-right: 38px;
     background: var(--bg-glass);
     border: 1px solid var(--border-subtle);
     border-top-left-radius: 4px;
@@ -308,9 +310,37 @@ body {
 }
 
 .msg-bubble.artifact {
+    padding-right: 14px;
     background: rgba(16, 185, 129, 0.08);
     border: 1px solid rgba(16, 185, 129, 0.2);
     border-top-left-radius: 4px;
+}
+
+.msg-copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out);
+}
+
+.msg-copy-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--border-accent);
+    background: rgba(99, 102, 241, 0.12);
+}
+
+.msg-copy-btn .fa-check {
+    color: var(--accent-green);
 }
 
 .artifact-link {

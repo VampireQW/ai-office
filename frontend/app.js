@@ -27,6 +27,7 @@ createApp({
         const showAgentProfile = ref(false);
         const learningInProgress = ref(false);
         const lastLearningRoute = ref(null);
+        const copiedMessageId = ref("");
 
         // History
         const showHistory = ref(false);      // 显示历史列表二级页
@@ -363,6 +364,39 @@ createApp({
                 ...expandedMessages.value,
                 [msg.id]: !expandedMessages.value[msg.id],
             };
+        };
+
+        const canCopyMessage = (msg) => {
+            return !!msg && msg.sender_id !== "user" && msg.message_type !== "artifact" && !!(msg.content || "").trim();
+        };
+
+        const writeToClipboard = async (text) => {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                return;
+            }
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.setAttribute("readonly", "");
+            textarea.style.position = "fixed";
+            textarea.style.left = "-9999px";
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+        };
+
+        const copyMessage = async (msg) => {
+            if (!canCopyMessage(msg)) return;
+            try {
+                await writeToClipboard(msg.content || "");
+                copiedMessageId.value = msg.id;
+                setTimeout(() => {
+                    if (copiedMessageId.value === msg.id) copiedMessageId.value = "";
+                }, 1400);
+            } catch (e) {
+                console.error("Copy message failed:", e);
+            }
         };
 
         const shouldRouteToEvolution = (content) => {
@@ -897,6 +931,7 @@ createApp({
             agents, messages, inputMessage, inputEl, currentTask, officeRegistry,
             mentionOpen, mentionCandidates, mentionIndex, handleInputChange, handleInputKeydown, selectMention,
             showAgentProfile, learningInProgress, lastLearningRoute,
+            copiedMessageId,
             showModal, modalTitle, modalPath, modalRenderedContent, modalRawContent,
             isHtmlPreview, previewUrl,
             stages, currentStage, isStageComplete, canStopTask,
@@ -905,6 +940,7 @@ createApp({
             sendMessage, approveTask, rejectTask, stopTask,
             getStatusText, getAvatar, getAgentName, getAction, getCardClass,
             renderMarkdown, isOperationalMessage, friendlyMessage, isMessageExpanded, toggleMessageDetails,
+            canCopyMessage, copyMessage,
             openArtifact, copyArtifact,
             toggleHistory, openHistory, deleteHistory, newConversation, backToLive, exitHistory, formatDate,
         };

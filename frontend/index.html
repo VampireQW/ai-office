@@ -227,6 +227,12 @@
                                 <div class="msg-sender">{{ getAgentName(msg.sender_id) }}</div>
                                 <div class="msg-bubble"
                                     :class="{agent: true, stage: msg.message_type === 'stage', artifact: msg.message_type === 'artifact'}">
+                                    <button v-if="canCopyMessage(msg)"
+                                        class="msg-copy-btn"
+                                        @click.stop="copyMessage(msg)"
+                                        :title="copiedMessageId === msg.id ? '已复制' : '复制回复'">
+                                        <i :class="copiedMessageId === msg.id ? 'fas fa-check' : 'fas fa-copy'"></i>
+                                    </button>
                                     <template v-if="isOperationalMessage(msg)">
                                         <button class="ops-summary" @click="toggleMessageDetails(msg)">
                                             <span>{{ friendlyMessage(msg) }}</span>
