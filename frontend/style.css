@@ -279,7 +279,6 @@ body {
 }
 
 .msg-bubble {
-    position: relative;
     padding: 10px 14px;
     border-radius: var(--radius-md);
     font-size: 13px;
@@ -289,7 +288,6 @@ body {
 }
 
 .msg-bubble.agent {
-    padding-right: 38px;
     background: var(--bg-glass);
     border: 1px solid var(--border-subtle);
     border-top-left-radius: 4px;
@@ -310,18 +308,20 @@ body {
 }
 
 .msg-bubble.artifact {
-    padding-right: 14px;
     background: rgba(16, 185, 129, 0.08);
     border: 1px solid rgba(16, 185, 129, 0.2);
     border-top-left-radius: 4px;
 }
 
+.msg-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+    padding-top: 6px;
+}
+
 .msg-copy-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 24px;
-    height: 24px;
+    min-height: 24px;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-sm);
     background: rgba(255, 255, 255, 0.04);
@@ -329,6 +329,10 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 5px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s var(--ease-out);
 }

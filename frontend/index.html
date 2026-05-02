@@ -227,12 +227,6 @@
                                 <div class="msg-sender">{{ getAgentName(msg.sender_id) }}</div>
                                 <div class="msg-bubble"
                                     :class="{agent: true, stage: msg.message_type === 'stage', artifact: msg.message_type === 'artifact'}">
-                                    <button v-if="canCopyMessage(msg)"
-                                        class="msg-copy-btn"
-                                        @click.stop="copyMessage(msg)"
-                                        :title="copiedMessageId === msg.id ? '已复制' : '复制回复'">
-                                        <i :class="copiedMessageId === msg.id ? 'fas fa-check' : 'fas fa-copy'"></i>
-                                    </button>
                                     <template v-if="isOperationalMessage(msg)">
                                         <button class="ops-summary" @click="toggleMessageDetails(msg)">
                                             <span>{{ friendlyMessage(msg) }}</span>
@@ -247,6 +241,14 @@
                                         <button @click="openArtifact(msg.metadata)">
                                             <i :class="msg.metadata.type === 'html' ? 'fas fa-globe' : 'fas fa-file-alt'"></i>
                                             {{ msg.metadata.type === 'html' ? '预览演示页面' : '查看产出物' }}
+                                        </button>
+                                    </div>
+                                    <div v-if="canCopyMessage(msg)" class="msg-actions">
+                                        <button class="msg-copy-btn"
+                                            @click.stop="copyMessage(msg)"
+                                            :title="copiedMessageId === msg.id ? '已复制' : '复制回复'">
+                                            <i :class="copiedMessageId === msg.id ? 'fas fa-check' : 'fas fa-copy'"></i>
+                                            <span>{{ copiedMessageId === msg.id ? '已复制' : '复制' }}</span>
                                         </button>
                                     </div>
                                 </div>
