@@ -184,7 +184,7 @@ CUSTOM_STAGE_MARKERS = [
 ]
 
 # LLM 意图识别系统提示词
-INTENT_SYSTEM_PROMPT = """你是 AI办公室智能助手的意图识别模块。根据用户输入，判断其真实意图。
+INTENT_SYSTEM_PROMPT = """你是 AI助手/小K 的意图识别模块。根据用户输入，判断其真实意图。
 
 ## 上下文信息
 {context}
@@ -229,7 +229,7 @@ INTENT_SYSTEM_PROMPT = """你是 AI办公室智能助手的意图识别模块。
 
 
 class OrchestratorAgent(BaseAgent):
-    def __init__(self, agent_id: str = "aiky_main", name: str = "AI办公室"):
+    def __init__(self, agent_id: str = "aiky_main", name: str = "AI助手/小K"):
         super().__init__(agent_id, name, AgentRole.AIKY_MAIN, ["management", "planning", "Senior PM"])
         self.active_tasks: Dict[str, Task] = {}
 
@@ -637,7 +637,7 @@ class OrchestratorAgent(BaseAgent):
         original = source_text or task.description
         stage_label = STAGE_NAMES.get(task.approval_stage or "", task.approval_stage or "直派任务")
         extra = f"\n\n### 当前员工补充指令\n{employee_instruction.strip()}" if employee_instruction.strip() else ""
-        return f"""# AI办公室员工任务包
+        return f"""# AI助手/小K 员工任务包
 
 ### 用户原始要求（最高优先级）
 {original}
@@ -842,7 +842,7 @@ class OrchestratorAgent(BaseAgent):
         if not agent or best_agent_id == "aiky_main":
             # AIky 自己回答
             agent = available_agents.get("aiky_main") or self
-            agent_info = "AI办公室"
+            agent_info = "AI助手/小K"
         else:
             agent_info = AGENT_EXPERTISE.get(best_agent_id, {}).get("name", agent.state.name)
 

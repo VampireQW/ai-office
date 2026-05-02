@@ -216,7 +216,7 @@ createApp({
         const nameMap = {
             ceo_01: "Steve (CEO)",
             cto_01: "Elon (CTO)",
-            aiky_main: "AI办公室",
+            aiky_main: "AI助手/小K",
             pm_01: "Emma (PM)",
             ui_01: "Alex (UI)",
             fe_01: "Lucas (前端)",
@@ -602,7 +602,7 @@ createApp({
                     appendMessage({
                         id: "learn_err_" + Date.now(),
                         sender_id: "system",
-                        content: "⚠️ 进化学习记录失败，请确认后端服务和 AI办公室 learning 目录可写。",
+                        content: "⚠️ 进化学习记录失败，请确认后端服务和学习目录可写。",
                         message_type: "text",
                     });
                 } finally {

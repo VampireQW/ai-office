@@ -817,13 +817,13 @@ body {
 .office-agent-avatar strong {
     display: block;
     width: 100%;
-    font-size: 10px;
+    font-size: 9.5px;
     line-height: 1.15;
     font-weight: 700;
     max-width: 100%;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: keep-all;
 }
 
 .agent-profile-float {

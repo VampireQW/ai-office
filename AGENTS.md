@@ -18,7 +18,7 @@ PE 工作流标准文件随仓库发布在：
 
 | 员工 | ID | 职位 | 专长领域 |
 |------|-----|------|---------|
-| AI办公室 | aiky_main | Office Brain | 任务调度、规格守门、质量裁判、知识沉淀、员工进化审批 |
+| AI助手/小K | aiky_main | 办公室总调度 | 任务调度、规格守门、质量裁判、知识沉淀、员工进化审批 |
 | Steve | ceo_01 | CEO | 市场趋势、商业模式、战略决策、市场分析、竞品分析 |
 | Elon | cto_01 | CTO | 技术架构、技术选型、性能优化、安全、数据库、API |
 
@@ -39,10 +39,10 @@ research（市场调研）
     → competitive（竞品分析）
         → planning（PRD）             ← Emma 负责，产出 3-PRD.md
             → architecture（架构设计） ← Elon 负责，产出 4-架构设计.md
-                → tasks（任务拆解）    ← AI办公室负责，产出 5-开发任务.md
+                → tasks（任务拆解）    ← AI助手/小K 负责，产出 5-开发任务.md
                     → execution（开发实现） ← Alex / Lucas / David
                         → testing（测试验收） ← Sarah
-                            → summary（项目总结） ← AI办公室
+                            → summary（项目总结） ← AI助手/小K
 ```
 
 当前后端执行链路已覆盖 `research → competitive → planning → architecture → execution`。
@@ -50,15 +50,15 @@ research（市场调研）
 
 ## 员工进化机制
 
-每个员工都拥有自己的进化焦点，但方法晋升必须经过 AI办公室：
+每个员工都拥有自己的进化焦点，但方法晋升必须经过 AI助手/小K：
 
 ```
 员工对话/项目反馈
     → observation / hypothesis
         → METHOD-CAND
             → review / benchmark / retro
-                → AI办公室 approve
-                    → promote 到员工能力库或 AI办公室方法论
+                → AI助手/小K approve
+                    → promote 到员工能力库或 AI助手/小K 方法论
 ```
 
 ## 技能定义位置（开发参考）
