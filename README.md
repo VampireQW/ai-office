@@ -99,8 +99,7 @@ AI办公室/
 ├─ frontend/                # 静态前端页面与像素办公室
 ├─ .env.example             # 环境变量模板
 ├─ requirements.txt         # Python 依赖
-├─ start.bat                # Windows 启动脚本
-└─ 启动AI办公室.bat          # 带检查流程的 Windows 启动脚本
+└─ start.bat                # Windows 启动脚本
 ```
 
 ## 许可证
