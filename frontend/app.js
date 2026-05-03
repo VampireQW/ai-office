@@ -242,9 +242,10 @@ createApp({
 
         const getCapability = (id) => {
             const stateProfile = agents.value[id]?.capability || {};
-            if (Object.keys(stateProfile).length) return stateProfile;
-            if (id === officeRegistry.value.brain?.id) return officeRegistry.value.brain || {};
-            return (officeRegistry.value.agents || {})[id] || {};
+            const registryProfile = id === officeRegistry.value.brain?.id
+                ? (officeRegistry.value.brain || {})
+                : ((officeRegistry.value.agents || {})[id] || {});
+            return { ...stateProfile, ...registryProfile };
         };
 
         const officeAgents = computed(() => {
