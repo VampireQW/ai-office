@@ -210,7 +210,8 @@ ROLE_WORKFLOW_KEYWORDS = {
     ],
     AgentRole.FRONTEND_DEV: [
         "前端", "实现页面", "生成页面", "写页面", "做页面", "做个页面", "做一个页面",
-        "html页面", "html 页面", "前端页面", "demo", "组件", "交互实现", "代码实现",
+        "生成html", "生成 html", "写html", "写 html", "做html", "做 html",
+        "一个html", "一个 html", "html页面", "html 页面", "前端页面", "demo", "组件", "交互实现", "代码实现",
     ],
     AgentRole.BACKEND_DEV: [
         "后端", "写接口文档", "生成接口文档", "写api文档", "写 api 文档",
@@ -221,6 +222,16 @@ ROLE_WORKFLOW_KEYWORDS = {
         "测试用例", "验收标准", "验收用例", "测试方案", "质量检查点", "回归测试", "冒烟测试",
     ],
 }
+
+GENERAL_INTENT_KEYWORDS = [
+    "总结", "概括", "归纳", "提炼", "摘要", "要点", "分析一下", "看一下", "读一下",
+    "读取", "解释", "聊聊", "评价", "review", "summary", "summarize",
+]
+
+CREATE_INTENT_KEYWORDS = [
+    "生成", "创建", "设计", "实现", "开发", "写", "做", "做个", "做一个", "输出",
+    "create", "generate", "build", "implement",
+]
 
 GENERAL_TASK_SYSTEM_PROMPT = """You are a practical assistant completing a direct user request.
 
@@ -236,6 +247,10 @@ Output in Chinese. Keep it useful, concise, and structured when structure helps.
 
 def _is_role_workflow_task(role: AgentRole, task_description: str) -> bool:
     lower = (task_description or "").lower()
+    has_general_intent = any(keyword.lower() in lower for keyword in GENERAL_INTENT_KEYWORDS)
+    has_create_intent = any(keyword.lower() in lower for keyword in CREATE_INTENT_KEYWORDS)
+    if has_general_intent and not has_create_intent:
+        return False
     return any(keyword.lower() in lower for keyword in ROLE_WORKFLOW_KEYWORDS.get(role, []))
 
 
