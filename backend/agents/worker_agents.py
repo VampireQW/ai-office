@@ -525,7 +525,12 @@ async def _build_visual_brief_internal(agent: BaseAgent, task_description: str, 
 """
 
 
-async def _continue_truncated_html(agent: BaseAgent, partial_html: str, system_prompt: str) -> str:
+async def _continue_truncated_html(
+    agent: BaseAgent,
+    partial_html: str,
+    system_prompt: str,
+    source_task: str = "",
+) -> str:
     if not _is_probably_truncated_html(partial_html):
         return partial_html
 
@@ -533,7 +538,15 @@ async def _continue_truncated_html(agent: BaseAgent, partial_html: str, system_p
     for attempt in range(2):
         tail = completed[-5000:]
         await agent.send_chat_message(f"老大，HTML 输出被截断了，我续写第 {attempt + 1} 次。")
-        continuation_prompt = f"""下面是一份尚未完成的 HTML 文件尾部。请从最后一个字符之后继续输出，直到完整闭合 </html>。
+        source_context = ""
+        if source_task:
+            source_context = f"""原始任务背景如下。续写时必须继续满足这些要求；如果其中包含图片输入，请继续参考图片视觉信息。
+
+{source_task}
+
+---
+"""
+        continuation_prompt = f"""{source_context}下面是一份尚未完成的 HTML 文件尾部。请从最后一个字符之后继续输出，直到完整闭合 </html>。
 
 要求：
 - 只输出续写部分
@@ -762,7 +775,7 @@ class WorkerAgent(BaseAgent):
             # HTML 文件需要提取纯 HTML
             if ext == ".html":
                 content = _extract_html(content)
-                content = await _continue_truncated_html(self, content, system_prompt)
+                content = await _continue_truncated_html(self, content, system_prompt, task_description)
                 if not _looks_like_visible_html(content):
                     if visual_mode in ("recreate", "reference") and "[[AIKY_IMAGE:" in task_description:
                         await self.send_chat_message("老大，流式生成结果仍然无效。我切到分块兜底模式。")
@@ -777,7 +790,7 @@ class WorkerAgent(BaseAgent):
                             )
                             content = await self.think(brief_description, system_prompt, max_retries=1)
                         content = _extract_html(content)
-                        content = await _continue_truncated_html(self, content, system_prompt)
+                        content = await _continue_truncated_html(self, content, system_prompt, task_description)
                     if not _looks_like_visible_html(content):
                         raise RuntimeError("模型没有输出有效的 HTML 页面，已停止保存空白产物")
 
@@ -872,7 +885,7 @@ class WorkerAgent(BaseAgent):
                 new_content = await self.think(revision_input, system_prompt)
             if ext == ".html":
                 new_content = _extract_html(new_content)
-                new_content = await _continue_truncated_html(self, new_content, system_prompt)
+                new_content = await _continue_truncated_html(self, new_content, system_prompt, feedback)
                 if not _looks_like_visible_html(new_content):
                     if visual_mode in ("recreate", "reference") and "[[AIKY_IMAGE:" in feedback:
                         await self.send_chat_message("老大，流式修改结果仍然无效。我切到分块兜底模式。")
@@ -894,7 +907,7 @@ class WorkerAgent(BaseAgent):
                         如果是 HTML，必须输出完整 HTML，从 <!DOCTYPE html> 到 </html>。"""
                             new_content = await self.think(revision_input, system_prompt, max_retries=1)
                         new_content = _extract_html(new_content)
-                        new_content = await _continue_truncated_html(self, new_content, system_prompt)
+                        new_content = await _continue_truncated_html(self, new_content, system_prompt, feedback)
                     if not _looks_like_visible_html(new_content):
                         raise RuntimeError("模型没有输出有效的 HTML 页面，已停止覆盖原产物")
             self._save_artifact(filename, new_content, folder)
