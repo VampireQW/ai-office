@@ -3,7 +3,7 @@
   "brain": {
     "id": "aiky_main",
     "name": "AI助手/小K",
-    "title": "办公室总调度",
+    "title": "办公室助理",
     "mission": "统一调度个人生产力办公室，守住规格、质量、知识沉淀和进化学习闭环。",
     "primary_workflows": ["pe-tasks", "pe-change", "pe-summary"],
     "support_workflows": ["pe-research", "pe-competitive", "pe-prd", "pe-architecture", "pe-code", "pe-testing"],

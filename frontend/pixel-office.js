@@ -386,7 +386,7 @@
     { id:'qa_01', name:'Sarah', title:'QA', robot:false, seatCol:4, seatRow:10,
       pal:{ H:'#CC3300',h:'#992200', S:'#F1C27D',s:'#D4A860', W:'#fff',E:'#1a1a2a', M:'#c04030',N:'#D4A860',
             B:'#DC2626',b:'#B91C1C', A:'#F1C27D',a:'#D4A860', L:'#1a1a2a', P:'#2a2a3e',p:'#1e1e2e', K:'#333',k:'#222', O:'#DC2626' }},
-    { id:'aiky_main',name:'AI助手/小K', title:'总调度', robot:true, seatCol:7, seatRow:10,
+    { id:'aiky_main',name:'AI助手/小K', title:'助理', robot:true, seatCol:7, seatRow:10,
       pal:{ H:'#6366f1',h:'#4f52c4', S:'#6366f1',s:'#4f52c4', W:'#1a1a2a',E:'#00eeff', M:'#00ff88',N:'#4f52c4',
             B:'#6366f1',b:'#4f52c4', A:'#6366f1',a:'#4f52c4', L:'#3a3a8a', P:'#4040aa',p:'#3030aa', K:'#333',k:'#222', O:'#818cf8' }},
     { id:'front_01', name:'Mia', title:'Reception', robot:false, npc:true, seatCol:13, seatRow:3,
