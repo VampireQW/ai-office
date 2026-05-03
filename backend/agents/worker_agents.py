@@ -203,6 +203,25 @@ PRD_KEYWORDS = [
     "prd", "产品需求文档", "需求文档", "写需求", "写一份需求", "产品方案",
 ]
 
+ROLE_WORKFLOW_KEYWORDS = {
+    AgentRole.PRODUCT_MANAGER: PRD_KEYWORDS,
+    AgentRole.UI_DESIGNER: [
+        "ui设计", "ui 设计", "界面设计", "页面设计", "原型", "视觉设计", "交互设计", "设计稿", "设计方案",
+    ],
+    AgentRole.FRONTEND_DEV: [
+        "前端", "实现页面", "生成页面", "写页面", "做页面", "做个页面", "做一个页面",
+        "html页面", "html 页面", "前端页面", "demo", "组件", "交互实现", "代码实现",
+    ],
+    AgentRole.BACKEND_DEV: [
+        "后端", "写接口文档", "生成接口文档", "写api文档", "写 api 文档",
+        "生成api文档", "生成 api 文档", "设计接口", "接口设计",
+        "数据库设计", "数据模型", "服务设计", "权限设计", "表结构",
+    ],
+    AgentRole.QA_ENGINEER: [
+        "测试用例", "验收标准", "验收用例", "测试方案", "质量检查点", "回归测试", "冒烟测试",
+    ],
+}
+
 GENERAL_TASK_SYSTEM_PROMPT = """You are a practical assistant completing a direct user request.
 
 Rules:
@@ -215,14 +234,14 @@ Rules:
 Output in Chinese. Keep it useful, concise, and structured when structure helps."""
 
 
-def _is_prd_task(task_description: str) -> bool:
+def _is_role_workflow_task(role: AgentRole, task_description: str) -> bool:
     lower = (task_description or "").lower()
-    return any(keyword.lower() in lower for keyword in PRD_KEYWORDS)
+    return any(keyword.lower() in lower for keyword in ROLE_WORKFLOW_KEYWORDS.get(role, []))
 
 
 def _effective_config(role: AgentRole, task_description: str) -> Dict:
     config = dict(ROLE_CONFIG.get(role, {}))
-    if role == AgentRole.PRODUCT_MANAGER and not _is_prd_task(task_description):
+    if role in ROLE_CONFIG and not _is_role_workflow_task(role, task_description):
         config.update({
             "workflow": None,
             "system_override": GENERAL_TASK_SYSTEM_PROMPT,
