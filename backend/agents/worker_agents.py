@@ -199,10 +199,46 @@ Do NOT wrap in markdown code blocks. Do NOT add any explanation outside the HTML
     },
 }
 
+PRD_KEYWORDS = [
+    "prd", "产品需求文档", "需求文档", "写需求", "写一份需求", "产品方案",
+]
+
+GENERAL_TASK_SYSTEM_PROMPT = """You are a practical assistant completing a direct user request.
+
+Rules:
+- Follow the user's original request first.
+- If the user asks for a summary, summarize the provided webpage, file, image, text, or context.
+- If the user asks a chat-style question, answer directly.
+- Do not turn the request into a PRD, PE workflow, market research report, test case document, or implementation plan unless the user explicitly asks for that format.
+- If context cannot be read, say that clearly and work only from what is available.
+
+Output in Chinese. Keep it useful, concise, and structured when structure helps."""
+
+
+def _is_prd_task(task_description: str) -> bool:
+    lower = (task_description or "").lower()
+    return any(keyword.lower() in lower for keyword in PRD_KEYWORDS)
+
+
+def _effective_config(role: AgentRole, task_description: str) -> Dict:
+    config = dict(ROLE_CONFIG.get(role, {}))
+    if role == AgentRole.PRODUCT_MANAGER and not _is_prd_task(task_description):
+        config.update({
+            "workflow": None,
+            "system_override": GENERAL_TASK_SYSTEM_PROMPT,
+            "prefix": "Result",
+            "ext": ".md",
+            "start_msg": "收到，我来处理。",
+            "done_msg": "我搞定了。",
+        })
+    return config
+
 
 def _infer_artifact_label(role: AgentRole, filename: str, task_description: str, ext: str) -> str:
     text = f"{filename} {task_description}".lower()
 
+    if filename.lower().startswith("result"):
+        return "结果"
     if role == AgentRole.FRONTEND_DEV:
         return "前端演示页面" if ext == ".html" else "前端实现文档"
     if role == AgentRole.UI_DESIGNER:
@@ -225,8 +261,10 @@ def _infer_artifact_label(role: AgentRole, filename: str, task_description: str,
 
 
 def _done_message(role: AgentRole, filename: str, task_description: str, ext: str) -> str:
+    if filename.lower().startswith("result"):
+        return "我搞定了。"
     label = _infer_artifact_label(role, filename, task_description, ext)
-    return f"老大，我完成了 {label}。"
+    return f"我完成了 {label}。"
 
 
 def _extract_html(content: str) -> str:
@@ -641,7 +679,7 @@ class WorkerAgent(BaseAgent):
             await self.perform_work(message.content)
 
     async def perform_work(self, task_description: str):
-        config = ROLE_CONFIG.get(self.state.role, {})
+        config = _effective_config(self.state.role, task_description)
 
         await self.update_status(AgentStatus.WORKING, task_description[:30])
         await self.send_chat_message(config.get("start_msg", "收到，老大，我来处理。"))

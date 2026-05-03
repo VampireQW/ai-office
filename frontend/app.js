@@ -346,15 +346,15 @@ createApp({
 
         const friendlyMessage = (msg) => {
             const content = msg.content || "";
-            if (content.includes("已读取") || content.includes("把材料读进来")) return "老大，材料我读进来了。";
+            if (content.includes("已读取") || content.includes("把材料读进来")) return "材料已读取。";
             const assignMatch = content.match(/交给\s+\*\*([^*]+)\*\*/)
                 || content.match(/指派给\s+\*\*([^*]+)\*\*/);
-            if (assignMatch) return `老大，我安排好了，${assignMatch[1]} 会直接处理。`;
+            if (assignMatch) return `${assignMatch[1]} 来处理。`;
             const stageMatch = content.match(/阶段\s+\d+\/\d+：([^*\\n]+)/);
-            if (stageMatch) return `老大，进入${stageMatch[1].trim()}了。`;
-            if (content.includes("指令分析完成") || content.includes("把流程拆好了")) return "老大，我把流程拆好了。";
-            if (content.includes("批准") || content.includes("继续推进")) return "收到，我继续往下推进。";
-            if (content.includes("跳过") || content.includes("直接进入")) return "收到，我按你说的阶段走。";
+            if (stageMatch) return `${stageMatch[1].trim()}开始。`;
+            if (content.includes("指令分析完成") || content.includes("把流程拆好了")) return "任务路径已确认。";
+            if (content.includes("批准") || content.includes("继续推进")) return "继续推进。";
+            if (content.includes("跳过") || content.includes("直接进入")) return "已切到指定阶段。";
             return content.split("\n")[0].slice(0, 36) || "处理中...";
         };
 

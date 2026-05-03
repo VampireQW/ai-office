@@ -139,14 +139,14 @@ STAGE_NAMES = {
 }
 
 ROLE_ACCEPTANCE_MESSAGES = {
-    AgentRole.AIKY_MAIN: "收到，老大，我来统筹。",
-    AgentRole.CEO: "收到，老大，我来判断市场和商业面。",
-    AgentRole.PRODUCT_MANAGER: "收到，老大，我来整理需求和 PRD。",
-    AgentRole.CTO: "收到，老大，我来梳理技术方案。",
-    AgentRole.UI_DESIGNER: "收到，老大，我来做界面方案。",
-    AgentRole.FRONTEND_DEV: "收到，老大，我来实现前端。",
-    AgentRole.BACKEND_DEV: "收到，老大，我来梳理后端和接口。",
-    AgentRole.QA_ENGINEER: "收到，老大，我来检查质量和测试点。",
+    AgentRole.AIKY_MAIN: "收到，我来处理。",
+    AgentRole.CEO: "收到，我来处理。",
+    AgentRole.PRODUCT_MANAGER: "收到，我来处理。",
+    AgentRole.CTO: "收到，我来处理。",
+    AgentRole.UI_DESIGNER: "收到，我来处理。",
+    AgentRole.FRONTEND_DEV: "收到，我来处理。",
+    AgentRole.BACKEND_DEV: "收到，我来处理。",
+    AgentRole.QA_ENGINEER: "收到，我来处理。",
 }
 
 START_STAGE_ALIASES = {
@@ -440,6 +440,7 @@ class OrchestratorAgent(BaseAgent):
         creation_intent = [
             "生成", "做", "实现", "设计", "重新设计", "复刻", "还原", "参考", "html",
             "页面", "ui", "原型", "测试用例", "prd", "文档", "方案",
+            "总结", "概括", "归纳", "提炼", "摘要", "要点", "summary", "summarize",
         ]
         return any(keyword in lower for keyword in creation_intent)
 
